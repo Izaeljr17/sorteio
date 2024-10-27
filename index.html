@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amigo Secreto</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Amigo Secreto</h1>
+        <form id="participantForm">
+            <input type="text" id="name" placeholder="Nome do participante" required>
+            <input type="email" id="email" placeholder="Email do participante" required>
+            <button type="button" onclick="addParticipant()">Adicionar Participante</button>
+        </form>
+        <ul id="participantsList"></ul>
+        <button type="button" onclick="drawSecretSanta()">Sortear Amigo Secreto</button>
+        <div id="results"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
