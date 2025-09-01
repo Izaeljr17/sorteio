@@ -1,23 +1,280 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amigo Secreto</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Convite de Casamento — Marina & Lucas</title>
+  <style>
+    :root{
+      --bg: #fff9f7;
+      --card: #ffffff;
+      --accent: #d97706;
+      --muted:#6b7280;
+      --glass: rgba(255,255,255,0.6);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;min-height:100vh;background:linear-gradient(180deg,#fff8f2 0%, #fff 60%);color:#111}
+    .wrap{max-width:1000px;margin:32px auto;padding:24px}
+    header{display:flex;gap:20px;align-items:center}
+    .logo{width:84px;height:84px;border-radius:16px;overflow:hidden;flex:0 0 84px;box-shadow:0 6px 20px rgba(0,0,0,0.08)}
+    .logo img{width:100%;height:100%;object-fit:cover}
+    .title{flex:1}
+    h1{margin:0;font-size:1.6rem;letter-spacing:0.6px}
+    p.lead{margin:6px 0 0;color:var(--muted)}
+
+    .card{background:var(--card);border-radius:16px;padding:20px;margin-top:18px;box-shadow:0 10px 30px rgba(13,12,11,0.06)}
+    .hero{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:center}
+    .hero .info{padding:10px}
+    .date{font-size:1.1rem;font-weight:600;color:var(--accent)}
+    .details{color:var(--muted);margin-top:8px}
+
+    .countdown{display:flex;gap:10px;margin-top:14px}
+    .countdown .item{background:var(--glass);backdrop-filter: blur(6px);padding:10px 12px;border-radius:10px;text-align:center;min-width:64px}
+    .countdown .num{font-weight:700;font-size:1.2rem}
+    .actions{display:flex;gap:10px;margin-top:14px}
+    .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn-primary{background:var(--accent);color:white}
+    .btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06)}
+
+    .gallery{display:flex;gap:10px;margin-top:18px}
+    .gallery img{width:100%;height:160px;object-fit:cover;border-radius:10px;cursor:pointer}
+    .col{display:flex;flex-direction:column;gap:10px;flex:1}
+
+    footer{margin-top:18px;color:var(--muted);font-size:0.9rem}
+
+    /* Modal */
+    .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;padding:20px}
+    .modal{background:white;border-radius:12px;max-width:520px;width:100%;padding:18px}
+    .modal h2{margin:0 0 10px}
+    label{display:block;font-size:0.9rem;margin:8px 0 6px}
+    input[type="text"],input[type="email"],select{width:100%;padding:10px;border-radius:8px;border:1px solid #e6e6e6}
+
+    .close{background:transparent;border:0;font-size:1.2rem;position:absolute;right:18px;top:12px}
+
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center}
+    .lightbox img{max-width:92%;max-height:92%;border-radius:10px}
+
+    /* Responsive */
+    @media (max-width:880px){
+      .hero{grid-template-columns:1fr}
+      .logo{display:none}
+      .gallery img{height:110px}
+    }
+
+    /* Print */
+    @media print{
+      body{background:white}
+      .btn, .actions, header, footer, .modal-back, .lightbox{display:none}
+      .card{box-shadow:none;border-radius:0}
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Amigo Secreto</h1>
-        <form id="participantForm">
-            <input type="text" id="name" placeholder="Nome do participante" required>
-            <input type="email" id="email" placeholder="Email do participante" required>
-            <button type="button" onclick="addParticipant()">Adicionar Participante</button>
-        </form>
-        <ul id="participantsList"></ul>
-        <button type="button" onclick="drawSecretSanta()">Sortear Amigo Secreto</button>
-        <div id="results"></div>
+  <div class="wrap">
+    <header>
+      <div class="logo"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="casal"></div>
+      <div class="title">
+        <h1>Marina & Lucas</h1>
+        <p class="lead">Temos a alegria de convidar você para celebrar conosco</p>
+      </div>
+      <div style="text-align:right">
+        <div style="font-weight:700">Sábado, 10 de Janeiro de 2026</div>
+        <div style="color:var(--muted)">Igreja Nossa Senhora das Flores • 16:00</div>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="hero">
+        <div class="info">
+          <div class="date">10 de Janeiro de 2026 — 16:00</div>
+          <div class="details">Cerimônia: Igreja Nossa Senhora das Flores<br>Recepção: Espaço Jardim das Rosas — Avenida das Palmeiras, 1234, Cidade das Águas</div>
+
+          <div class="countdown" id="countdown">
+            <div class="item"><div class="num" id="d">--</div><div class="muted">dias</div></div>
+            <div class="item"><div class="num" id="h">--</div><div class="muted">horas</div></div>
+            <div class="item"><div class="num" id="m">--</div><div class="muted">min</div></div>
+            <div class="item"><div class="num" id="s">--</div><div class="muted">seg</div></div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="rsvpBtn">Confirmar presença</button>
+            <button class="btn btn-ghost" id="mapBtn">Como chegar</button>
+            <button class="btn btn-ghost" id="printBtn">Imprimir convite</button>
+          </div>
+
+          <div style="margin-top:12px;color:var(--muted)">Contato para informações: (11) 9 9999-9999</div>
+        </div>
+
+        <aside>
+          <div style="border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,0.06)">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="noiva" style="width:100%;height:320px;object-fit:cover">
+            <div style="padding:12px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.98))">
+              <div style="font-weight:700">Marina Costa</div>
+              <div style="color:var(--muted);font-size:0.9rem">Noiva</div>
+            </div>
+          </div>
+          <div style="height:12px"></div>
+          <div style="border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,0.06)">
+            <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="noivo" style="width:100%;height:160px;object-fit:cover">
+            <div style="padding:12px;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.98))">
+              <div style="font-weight:700">Lucas Almeida</div>
+              <div style="color:var(--muted);font-size:0.9rem">Noivo</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="gallery" aria-label="Galeria de fotos">
+        <div class="col">
+          <img src="https://images.unsplash.com/photo-1496284045406-d3e0b918d23b?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="foto1" data-large>
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="foto2" data-large>
+        </div>
+        <div class="col">
+          <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="foto3" data-large>
+          <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="foto4" data-large>
+        </div>
+        <div class="col">
+          <img src="https://images.unsplash.com/photo-1505575967458-3f3d4d0d0f51?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="foto5" data-large>
+        </div>
+      </div>
+
+    </section>
+
+    <footer>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div>Traje: Esporte fino • Presentes: Não é necessário</div>
+        <div style="color:var(--muted)">Enviamos lembrete por SMS 3 dias antes</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- RSVP Modal -->
+  <div class="modal-back" id="rsvpModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rsvpTitle">
+      <button class="close" id="closeModal">✕</button>
+      <h2 id="rsvpTitle">Confirmar presença</h2>
+      <form id="rsvpForm">
+        <label for="name">Nome completo</label>
+        <input id="name" type="text" required placeholder="Ex: João da Silva">
+
+        <label for="email">E‑mail (opcional)</label>
+        <input id="email" type="email" placeholder="seu@email.com">
+
+        <label for="attend">Vai comparecer?</label>
+        <select id="attend">
+          <option value="yes">Sim, confirmo presença</option>
+          <option value="no">Não poderei comparecer</option>
+        </select>
+
+        <label for="guests">Número de acompanhantes</label>
+        <select id="guests">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+        </select>
+
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+          <button type="button" class="btn btn-ghost" id="cancel">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Enviar RSVP</button>
+        </div>
+      </form>
     </div>
-    <script src="script.js"></script>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <img src="" alt="Foto ampliada" id="lightboxImg">
+  </div>
+
+  <script>
+    // Countdown
+    const eventDate = new Date('2026-01-10T16:00:00');
+    function updateCountdown(){
+      const now = new Date();
+      let diff = Math.max(0, eventDate - now);
+      const days = Math.floor(diff / (1000*60*60*24));
+      diff -= days*(1000*60*60*24);
+      const hours = Math.floor(diff / (1000*60*60));
+      diff -= hours*(1000*60*60);
+      const mins = Math.floor(diff / (1000*60));
+      diff -= mins*(1000*60);
+      const secs = Math.floor(diff / 1000);
+      document.getElementById('d').textContent = days;
+      document.getElementById('h').textContent = String(hours).padStart(2,'0');
+      document.getElementById('m').textContent = String(mins).padStart(2,'0');
+      document.getElementById('s').textContent = String(secs).padStart(2,'0');
+    }
+    updateCountdown();setInterval(updateCountdown,1000);
+
+    // Modal logic
+    const rsvpBtn = document.getElementById('rsvpBtn');
+    const modal = document.getElementById('rsvpModal');
+    const closeModal = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancel');
+    const form = document.getElementById('rsvpForm');
+
+    rsvpBtn.addEventListener('click', ()=>{ modal.style.display='flex'; document.getElementById('name').focus(); });
+    closeModal.addEventListener('click', ()=> modal.style.display='none');
+    cancelBtn.addEventListener('click', ()=> modal.style.display='none');
+    window.addEventListener('click', (e)=>{ if(e.target === modal) modal.style.display='none'; });
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const data = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        attend: document.getElementById('attend').value,
+        guests: document.getElementById('guests').value,
+        timestamp: new Date().toISOString()
+      };
+      // Save to localStorage (so user can re-open and see confirmation) and simulate send
+      let responses = JSON.parse(localStorage.getItem('rsvps')||'[]');
+      responses.push(data);
+      localStorage.setItem('rsvps', JSON.stringify(responses));
+      modal.style.display='none';
+      alert('Obrigado! Seu RSVP foi salvo.');
+    });
+
+    // Map button (opens Google Maps with the fictional address)
+    document.getElementById('mapBtn').addEventListener('click', ()=>{
+      const q = encodeURIComponent('Avenida das Palmeiras, 1234, Cidade das Águas');
+      const url = `https://www.google.com/maps/search/?api=1&query=${q}`;
+      window.open(url, '_blank');
+    });
+
+    // Print button
+    document.getElementById('printBtn').addEventListener('click', ()=> window.print());
+
+    // Lightbox for gallery
+    const galleryImgs = document.querySelectorAll('.gallery img');
+    const lightbox = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightboxImg');
+    galleryImgs.forEach(img=>{
+      img.addEventListener('click', ()=>{
+        lbImg.src = img.src.replace('q=80','q=100');
+        lightbox.style.display='flex';
+        lightbox.setAttribute('aria-hidden','false');
+      });
+    });
+    lightbox.addEventListener('click', ()=>{ lightbox.style.display='none'; lightbox.setAttribute('aria-hidden','true'); });
+
+    // Share button (optional navigator.share)
+    // If navigator.share is supported, add a quick share to the actions
+    if(navigator.share){
+      const shareBtn = document.createElement('button');
+      shareBtn.className='btn btn-ghost';
+      shareBtn.textContent = 'Compartilhar';
+      shareBtn.addEventListener('click', ()=>{
+        navigator.share({title:'Convite Marina & Lucas', text:'Você foi convidado para o casamento de Marina & Lucas — 10/01/2026', url:location.href});
+      });
+      document.querySelector('.actions').appendChild(shareBtn);
+    }
+
+    // Accessibility: keyboard shortcut R to open RSVP
+    window.addEventListener('keydown',(e)=>{ if(e.key.toLowerCase()==='r') rsvpBtn.click(); });
+  </script>
 </body>
 </html>
